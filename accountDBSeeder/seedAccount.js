@@ -1,14 +1,13 @@
 // require the necessary libraries
 require('dotenv').config();
-const {fakerPT_PT } = require('@faker-js/faker');
 const mongoose = require("mongoose")
-const Account = require("./models/account-model")
-const Account = require("./models/account-model")
+const accountModel = require("../models/account-model")
+const cardModel = require("../models/card-model")
 
 async function seedData() {
     // Connection URL
-    const uri = process.env.URL_MONGO_DB;
-    const seed_count = 5000;
+    const uri = process.env.URL_MONGO_DB + process.env.ACCOUNT_DB_NAME;
+    const seed_count = 1000;
     mongoose.set("strictQuery", false);
     mongoose.connect(uri, {
         useNewUrlParser: true,
@@ -18,19 +17,19 @@ async function seedData() {
     }).catch((err) => {
         console.log("error", err)
     })
-
-    let timeSeriesData = [];
-
     
+    let accountsData = [];
+    let cardsData = [];        
     // create 5000 fake data
     for (let i = 0; i < seed_count; i++) {
-        const name = fakerPT_PT.person.fullName();
-        const price = fakerPT_PT.commerce.price()
-        timeSeriesData.push({ name, price });
+        const accountGenerated = accountModel.generateAccount();
+        accountsData.push(accountGenerated);
+        cardsData.push(cardModel.generateCard(accountGenerated._id));
     }
-
+    
     const seedDB = async () => {
-        await Account.insertMany(timeSeriesData)
+        await accountModel.accountSchema.insertMany(accountsData)
+        await cardModel.cardSchema.insertMany(cardsData)
     }
 
     seedDB().then(() => {
@@ -39,4 +38,4 @@ async function seedData() {
     })
 }
 
-seedData()
+module.exports.seedData = seedData();

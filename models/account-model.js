@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {fakerPT_PT } = require('@faker-js/faker');
 
 //GENERATE RANDOM ACCOUNT
-function generateRandomAccount(){
+function generateRandomAccount(onlineBankingIndicator){
     const creationTime = fakerPT_PT.date.past();
     const actualDate = Date();
 
@@ -14,7 +14,7 @@ function generateRandomAccount(){
       iban: fakerPT_PT.finance.iban({ formatted: true, countryCode: 'PT' }),
       lastUpdateTime: fakerPT_PT.date.between({creationTime, actualDate}),
       number: fakerPT_PT.finance.accountNumber(),
-      onlineBankingIndicator: fakerPT_PT.datatype.boolean(),
+      onlineBankingIndicator: onlineBankingIndicator,
       type: fakerPT_PT.helpers.arrayElement(['Conta à ordem',
                                             'Conta base', 
                                             'Conta de Serviços Minimos Bancários',

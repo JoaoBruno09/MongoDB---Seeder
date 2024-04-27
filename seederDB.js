@@ -14,38 +14,33 @@ async function seedData(seedCount) {
     let relationData = [];  
     let interventionData = [];
     let customerData = [];
-    let customerAccountData = [];
     let addressData = [];
-    let customerAddressData = [];
-    let contactData = [];
-    let customerContactData = [];         
+    let contactData = [];     
     
     // create fake data
     for (let i = 0; i < seedCount; i++) {
         const customerGenerated = customerModel.generateCustomer();
-        customerData.push(customerGenerated);
-        
         const customerId = customerGenerated._id;
+        
         const addressGenerated = customerModel.generateAddress();
+        const addressId = addressGenerated._id;
+        const customerAddress = {addressId};
         addressData.push(addressGenerated);
 
-        const addressId = addressGenerated._id;
-        const customerAddress = {addressId, customerId};
-        customerAddressData.push(customerAddress)
-
         const contactGenerated = customerModel.generateContact();
-        contactData.push(contactGenerated);
-
         const contactId = contactGenerated._id;
-        const customerContact = {contactId, customerId};
-        customerContactData.push(customerContact);
-
-        const accountGenerated = accountModel.generateAccount(customerGenerated.onlineBankingIndicator);
-        accountsData.push(accountGenerated);
+        const customerContact = {contactId};
+        contactData.push(contactGenerated);
         
+        const accountGenerated = accountModel.generateAccount(customerGenerated.onlineBankingIndicator);
         const accountId = accountGenerated._id;
-        const customerAccount = {accountId, customerId};
-        customerAccountData.push(customerAccount);
+        const customerAccount = {accountId};
+        accountsData.push(accountGenerated);
+
+        customerGenerated.accounts.push(customerAccount)
+        customerGenerated.addresses.push(customerAddress)
+        customerGenerated.contacts.push(customerContact)
+        customerData.push(customerGenerated);
 
         documentData.push(documentModel.generateDocument(customerId, accountId));
         if(customerGenerated.cardIndicator == true) cardsData.push(cardModel.generateCard(customerId, accountId));
@@ -56,11 +51,8 @@ async function seedData(seedCount) {
     
     const seedDB = async () => {
         await customerModel.customerSchema.insertMany(customerData)
-        await customerModel.customerAccountSchema.insertMany(customerAccountData);
         await customerModel.addressSchema.insertMany(addressData)
-        await customerModel.customerAddressSchema.insertMany(customerAddressData)
         await customerModel.contactSchema.insertMany(contactData);
-        await customerModel.customerContactSchema.insertMany(customerContactData);
         await accountModel.accountSchema.insertMany(accountsData)
         await cardModel.cardSchema.insertMany(cardsData)
         await documentModel.documentSchema.insertMany(documentData)

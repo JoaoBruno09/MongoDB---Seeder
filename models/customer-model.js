@@ -11,9 +11,12 @@ function generateRandomCustomer(){
 
     return {
       _id: fakerPT_PT.string.uuid(),
+      accounts: [],
+      addresses: [],
       annualIncome: fakerPT_PT.number.float({ min: 10000, max: 100000, fractionDigits: 2 }),
       birthDate: fakerPT_PT.date.past(),
       cardIndicator: fakerPT_PT.datatype.boolean(),
+      contacts: [],
       createdTime: creationTime,
       documentIdCountry: 'PT',
       documentIdNumber: '36687036 0 ZX8',
@@ -77,6 +80,14 @@ const customerSchema = new mongoose.Schema({
     type: String,
     required:true   
   },
+  accounts:{
+    type: Object,
+    required:true   
+  },
+  addresses:{
+    type: Object,
+    required:true   
+  },
   annualIncome:{
     type: Number,
     required:true   
@@ -88,6 +99,10 @@ const customerSchema = new mongoose.Schema({
   cardIndicator:{
     type: Boolean,
     required:false   
+  },
+  contacts:{
+    type: Object,
+    required:true   
   },
   createdTime:{
     type: Date,
@@ -180,19 +195,6 @@ const customerSchema = new mongoose.Schema({
 })
 const Customer = mongoose.model("Customer", customerSchema)
 
-//CUSTOMER_ACCOUNT SCHEMA MODEL
-const customerAccountSchema = mongoose.Schema({
-  accountId:{
-    type: String,
-    required: true
-  },
-  customerId:{
-    type: String,
-    required: true
-  }
-})
-const CustomerAccount = mongoose.model("Customer_Account", customerAccountSchema)
-
 //ADDRESS SCHEMA MODEL
 const addressSchema = mongoose.Schema({
   _id:{
@@ -217,19 +219,6 @@ const addressSchema = mongoose.Schema({
   }
 })
 const Address =  mongoose.model("Address", addressSchema)
-
-//CUSTOMER_ADDRESS SCHEMA MODEL
-const customerAddressSchema = mongoose.Schema({
-  addressId:{
-    type: String,
-    required: true
-  },
-  customerId:{
-    type: String,
-    required: true
-  }
-})
-const CustomerAddress = mongoose.model("Customer_Address", customerAddressSchema)
 
 //CONTACT SCHEMA MODEL
 const contactSchema = mongoose.Schema({
@@ -256,26 +245,10 @@ const contactSchema = mongoose.Schema({
 })
 const Contact =  mongoose.model("Contact", contactSchema)
 
-//CUSTOMER_CONTACT SCHEMA MODEL
-const customerContactSchema = mongoose.Schema({
-  contactId:{
-    type: String,
-    required: true
-  },
-  customerId:{
-    type: String,
-    required: true
-  }
-})
-const CustomerContact = mongoose.model("Customer_Contact", customerContactSchema)
-
 
 module.exports.customerSchema = Customer;
-module.exports.customerAccountSchema = CustomerAccount;
 module.exports.addressSchema = Address;
-module.exports.customerAddressSchema = CustomerAddress;
 module.exports.contactSchema = Contact;
-module.exports.customerContactSchema = CustomerContact;
 module.exports.generateCustomer =  generateRandomCustomer;
 module.exports.generateAddress =  generateRandomAddress;
 module.exports.generateContact = generateRandomContact;

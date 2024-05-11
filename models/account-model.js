@@ -9,12 +9,14 @@ function generateRandomAccount(onlineBankingIndicator){
     return {
       _id: fakerPT_PT.string.uuid(),
       accountManager: fakerPT_PT.person.fullName(),
+      active: true,
       currencyCode: 'EUR',
       creationTime: creationTime,
       iban: fakerPT_PT.finance.iban({ formatted: true, countryCode: 'PT' }),
       lastUpdateTime: fakerPT_PT.date.between({creationTime, actualDate}),
       number: fakerPT_PT.finance.accountNumber(),
       onlineBankingIndicator: onlineBankingIndicator,
+      status: 'COMPLETED',
       type: fakerPT_PT.helpers.arrayElement(['Conta à ordem',
                                             'Conta base', 
                                             'Conta de Serviços Minimos Bancários',
@@ -34,6 +36,10 @@ const accountSchema = new mongoose.Schema({
     },
     accountManager:{
         type:String,
+        required:true
+    },
+    active:{
+        type:Boolean,
         required:true
     },
     currencyCode:{
@@ -60,10 +66,14 @@ const accountSchema = new mongoose.Schema({
         type:Boolean,
         required:false
     },
-    type:{
+    status:{
         type:String,
         required:true
     },
+    type:{
+        type:String,
+        required:true
+    }
 })
 const Account = mongoose.model("Account",accountSchema)
 

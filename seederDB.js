@@ -44,7 +44,7 @@ async function seedData(seedCount) {
 
         documentData.push(documentModel.generateDocument(customerId, accountId));
         if(customerGenerated.cardIndicator == true) cardsData.push(cardModel.generateCard(customerId, accountId));
-        if(customerGenerated.relationIndicator == true) relationData.push(relationModel.generateRelation(customerId, accountId));
+        if(customerGenerated.relationIndicator == true) relationData.push(relationModel.generateRelation(customerId));
         if(customerGenerated.intervenientIndicator == true) interventionData.push(interventionModel.generateIntervention(customerId, accountId));
 
     }

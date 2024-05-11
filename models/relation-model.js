@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {fakerPT_PT } = require('@faker-js/faker');
 
 //GENERATE RANDOM RELATION
-function generateRandomRelation(customerId, accountId){
+function generateRandomRelation(customerId){
     const creationTime = fakerPT_PT.date.past();
     const actualDate = Date();
     const description = fakerPT_PT.helpers.arrayElement([
@@ -22,8 +22,7 @@ function generateRandomRelation(customerId, accountId){
       description: description,
       fatherId: fakerPT_PT.string.uuid(),
       lastUpdateTime: fakerPT_PT.date.between({creationTime, actualDate}),
-      relationType: getRelationType(description),
-      accountId: accountId
+      relationType: getRelationType(description)
     };
 }
 
@@ -77,10 +76,6 @@ const relationSchema = new mongoose.Schema({
         required:true
     },
     relationType:{
-        type:String,
-        required:true
-    },
-    accountId:{
         type:String,
         required:true
     }

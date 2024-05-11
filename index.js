@@ -2,7 +2,7 @@ require('dotenv').config();
 const dBSeeder = require("./seederDB")
 const mongoose = require("mongoose")
 
-const seedCount = 40000;
+const seedCount = 15000;
 const uriDB = process.env.URL_MONGO_DB + process.env.ACCOUNT_DB_NAME;
 
 setMongooseConnection(uriDB)

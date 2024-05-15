@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {fakerPT_PT } = require('@faker-js/faker');
 
 //GENERATE RANDOM INTERVENTION
-function generateRandomIntervention(customerId, accountId){
+function generateRandomIntervention(customerId){
     const creationTime = fakerPT_PT.date.past();
     const actualDate = Date();
     const description = fakerPT_PT.helpers.arrayElement([
@@ -16,7 +16,6 @@ function generateRandomIntervention(customerId, accountId){
       description: description,
       lastUpdateTime: fakerPT_PT.date.between({creationTime, actualDate}),
       interventionType: getInterventionType(description),
-      accountId: accountId,
       customerId: customerId
     };
 }
@@ -51,10 +50,6 @@ const interventionSchema = new mongoose.Schema({
         required:true
     },
     interventionType:{
-        type:String,
-        required:true
-    },
-    accountId:{
         type:String,
         required:true
     },

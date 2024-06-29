@@ -7,7 +7,6 @@ const relationModel = require("./models/relation-model")
 const interventionModel = require("./models/intervention-model")
 const customerModel = require("./models/customer-model")
 const customersModel = require("./models/customers-model")
-const accountsModel = require("./models/accounts-model")
 
 async function seedData(seedCount) {
     let accountData = [];
@@ -18,43 +17,39 @@ async function seedData(seedCount) {
     let customerData = [];
     let addressData = [];
     let contactData = []; 
-    let customersData = []; 
-    let accountsData = [];     
+    let customersData = [];  
     
     // create fake data
     for (let i = 0; i < seedCount; i++) {
         const customerGenerated = customerModel.generateCustomer();
-        const customerId = customerGenerated._id;
         const customerNumber = customerGenerated.number;
         
         const addressGenerated = customerModel.generateAddress();
+        addressData.push(addressGenerated);
         const addressId = addressGenerated._id;
         const customerAddress = {addressId};
-        addressData.push(addressGenerated);
-
+        customerGenerated.addresses.push(customerAddress)
+        
         const contactGenerated = customerModel.generateContact();
+        contactData.push(contactGenerated);
         const contactId = contactGenerated._id;
         const customerContact = {contactId};
-        contactData.push(contactGenerated);
+        customerGenerated.contacts.push(customerContact)
         
         const accountGenerated = accountModel.generateAccount(customerGenerated.onlineBankingIndicator);
-        const accountId = accountGenerated._id;
-        const accountNumber = accountGenerated.number;
-        const customerAccount = {accountId};
         accountData.push(accountGenerated);
-        accountsData.push(accountsModel.saveExistingAccount(accountId,accountNumber))
-
+        
+        const accountNumber = accountGenerated.number;
+        const customerAccount = {accountNumber};
         customerGenerated.accounts.push(customerAccount)
-        customerGenerated.addresses.push(customerAddress)
-        customerGenerated.contacts.push(customerContact)
+
         customerData.push(customerGenerated);
-        customersData.push(customersModel.saveExistingCustomer(customerId,customerNumber))
+        customersData.push(customersModel.saveExistingCustomer(customerNumber, customerGenerated.isValid, customerGenerated.accounts))
 
-        documentData.push(documentModel.generateDocument(customerId, accountId));
-        if(customerGenerated.cardIndicator == true) cardsData.push(cardModel.generateCard(customerId, accountId));
-        if(customerGenerated.relationIndicator == true) relationData.push(relationModel.generateRelation(customerId));
-        if(customerGenerated.intervenientIndicator == true) interventionData.push(interventionModel.generateIntervention(customerId));
-
+        documentData.push(documentModel.generateDocument(customerNumber, accountNumber));
+        if(customerGenerated.cardIndicator == true) cardsData.push(cardModel.generateCard(customerNumber, accountGenerated._id));
+        if(customerGenerated.relationIndicator == true) relationData.push(relationModel.generateRelation(customerNumber));
+        if(customerGenerated.intervenientIndicator == true) interventionData.push(interventionModel.generateIntervention(customerNumber, accountNumber));
     }
     
     const seedDB = async () => {
@@ -63,7 +58,6 @@ async function seedData(seedCount) {
         await customerModel.contactSchema.insertMany(contactData);
         await customersModel.customersSaverSchema.insertMany(customersData)
         await accountModel.accountSchema.insertMany(accountData)
-        await accountsModel.accountsSaverSchema.insertMany(accountsData)
         await cardModel.cardSchema.insertMany(cardsData)
         await documentModel.documentSchema.insertMany(documentData)
         await relationModel.relationSchema.insertMany(relationData)

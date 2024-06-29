@@ -5,17 +5,18 @@ const {fakerPT_PT } = require('@faker-js/faker');
 function generateRandomAccount(onlineBankingIndicator){
     const creationTime = fakerPT_PT.date.past();
     const actualDate = Date();
-    const iban = fakerPT_PT.finance.iban({ formatted: true, countryCode: 'PT' });
+    let accountIban = fakerPT_PT.finance.iban({ formatted: true, countryCode: 'PT' });
 
     return {
-      _id: fakerPT_PT.string.uuid(),
+      _id: mongoose.Types.ObjectId.createFromBase64(fakerPT_PT.string.alphanumeric({ length: { min: 16, max: 16 } })),
       accountManager: fakerPT_PT.person.fullName(),
       active: true,
       currencyCode: 'EUR',
       creationTime: creationTime,
-      iban: iban,
+      iban: accountIban,
+      hasValidDocs: true,
       lastUpdateTime: fakerPT_PT.date.between({creationTime, actualDate}),
-      number: iban.trim().replaceAll(" ","").substring(iban.length - 23).slice(0,-1),
+      number: accountIban.trim().replaceAll(" ","").substring(accountIban.length - 23).slice(0,-1),
       onlineBankingIndicator: onlineBankingIndicator,
       status: 'COMPLETED',
       phase: 4,
@@ -33,7 +34,7 @@ function generateRandomAccount(onlineBankingIndicator){
 //ACCOUNT SCHEMA MODEL
 const accountSchema = new mongoose.Schema({
     _id:{
-     type: String,
+     type: mongoose.Types.ObjectId,
      required:true   
     },
     accountManager:{
@@ -54,6 +55,10 @@ const accountSchema = new mongoose.Schema({
     },
     iban:{
         type:String,
+        required:true
+    },
+    hasValidDocs:{
+        type:Boolean,
         required:true
     },
     lastUpdateTime:{

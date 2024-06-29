@@ -1,21 +1,26 @@
 const mongoose = require("mongoose");
 
 //SAVE EXISTING CUSTOMER
-function saveExistingCustomer(customerId, customerNumber){
+function saveExistingCustomer(customerNumber, isValid, accounts){
     return {
-      _id: customerId, 
       customerNumber: customerNumber,
+      isValid: isValid,
+      accounts: accounts
     };
 }
 
 //CUSTOMERS SCHEMA MODEL
 const customersSaverSchema = new mongoose.Schema({
-  _id:{
+  customerNumber:{
     type: String,
     required:true   
   },
-  customerNumber:{
-    type: String,
+  isValid:{
+    type: Boolean,
+    required: true
+  },
+  accounts:{
+    type: Object,
     required:true   
   }
 })

@@ -7,10 +7,9 @@ function generateRandomCustomer(){
     const actualDate = Date();
     const fatherLastName = fakerPT_PT.person.lastName();
     const gender = fakerPT_PT.person.sex();
-    const clientNumber = 'C' + fakerPT_PT.string.numeric(9);
+    let clientNumber = 'C' + fakerPT_PT.string.numeric(9);
 
     return {
-      _id: fakerPT_PT.string.uuid(),
       accounts: [],
       addresses: [],
       annualIncome: fakerPT_PT.number.float({ min: 10000, max: 100000, fractionDigits: 2 }),
@@ -33,6 +32,7 @@ function generateRandomCustomer(){
       firstName: fakerPT_PT.person.firstName(gender),
       gender: gender,
       intervenientIndicator: fakerPT_PT.datatype.boolean(),
+      isValid: true,
       lastName: fatherLastName,
       lastUpdateTime:fakerPT_PT.date.between({creationTime, actualDate}),
       motherName: fakerPT_PT.person.fullName({sex: 'female'}),
@@ -50,8 +50,8 @@ function generateRandomCustomer(){
 
 function generateRandomAddress(){
   return {
-    _id: fakerPT_PT.string.uuid(),
-    city: fakerPT_PT.location.cityName(),
+    _id: mongoose.Types.ObjectId.createFromBase64(fakerPT_PT.string.alphanumeric({ length: { min: 16, max: 16 } })),
+    city: fakerPT_PT.location.city(),
     country: 'Portugal',
     street: fakerPT_PT.location.streetAddress(),
     zip: fakerPT_PT.location.zipCode()
@@ -66,7 +66,7 @@ function generateRandomContact(){
     'E-mail'])
 
   return {
-    _id: fakerPT_PT.string.uuid(),
+    _id: mongoose.Types.ObjectId.createFromBase64(fakerPT_PT.string.alphanumeric({ length: { min: 16, max: 16 } })),
     type: type,
     value: type == 'Telemóvel' ? fakerPT_PT.phone.number() : fakerPT_PT.internet.email(),
     creationTime: creationTime,
@@ -76,10 +76,6 @@ function generateRandomContact(){
 
 //CUSTOMER SCHEMA MODEL
 const customerSchema = new mongoose.Schema({
-  _id:{
-    type: String,
-    required:true   
-  },
   accounts:{
     type: Object,
     required:true   
@@ -144,6 +140,10 @@ const customerSchema = new mongoose.Schema({
     type: Boolean,
     required:false   
   },
+  isValid:{
+    type: Boolean,
+    required:false   
+  },
   lastName:{
     type: String,
     required:true   
@@ -198,7 +198,7 @@ const Customer = mongoose.model("Customer", customerSchema)
 //ADDRESS SCHEMA MODEL
 const addressSchema = mongoose.Schema({
   _id:{
-    type: String,
+    type: mongoose.Types.ObjectId,
     required: true
   },
   city:{
@@ -223,7 +223,7 @@ const Address =  mongoose.model("Address", addressSchema)
 //CONTACT SCHEMA MODEL
 const contactSchema = mongoose.Schema({
   _id:{
-    type: String,
+    type: mongoose.Types.ObjectId,
     required: true
   },
   type:{

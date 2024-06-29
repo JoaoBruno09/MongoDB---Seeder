@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {fakerPT_PT } = require('@faker-js/faker');
 
 //GENERATE RANDOM RELATION
-function generateRandomRelation(customerId){
+function generateRandomRelation(customerNumber){
     const creationTime = fakerPT_PT.date.past();
     const actualDate = Date();
     const description = fakerPT_PT.helpers.arrayElement([
@@ -16,11 +16,10 @@ function generateRandomRelation(customerId){
     'Sócio-Gerente']);
 
     return {
-      _id: fakerPT_PT.string.uuid(),
       creationTime: creationTime,
-      childId: customerId,
+      childCustomerNumber: customerNumber,
       description: description,
-      fatherId: fakerPT_PT.string.uuid(),
+      fatherCustomerNumber: customerNumber,
       lastUpdateTime: fakerPT_PT.date.between({creationTime, actualDate}),
       relationType: getRelationType(description)
     };
@@ -51,15 +50,11 @@ function getRelationType(description){
 
 //RELATION SCHEMA MODEL
 const relationSchema = new mongoose.Schema({
-    _id:{
-     type: String,
-     required:true   
-    },
     creationTime:{
         type: Date,
         required:true
     },
-    childId:{
+    childCustomerNumber:{
         type:String,
         required:true
     },
@@ -67,7 +62,7 @@ const relationSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    fatherId:{
+    fatherCustomerNumber:{
         type:String,
         required:true
     },
